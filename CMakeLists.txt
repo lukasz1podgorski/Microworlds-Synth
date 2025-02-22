@@ -35,6 +35,8 @@ set(SourceFiles
         Source/PluginProcessor.h
         Source/MicroworldsSynth.cpp
         Source/MicroworldsSynth.h
+        Source/WavetableOscillator.cpp
+        Source/WavetableOscillator.h
 )
 
 # Change these to your own preferences
@@ -46,7 +48,7 @@ juce_add_plugin(${PROJECT_NAME}
         IS_MIDI_EFFECT FALSE
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE
         JUCE_VST3_CAN_REPLACE_VST2 FALSE
-        COPY_PLUGIN_AFTER_BUILD TRUE
+        COPY_PLUGIN_AFTER_BUILD FALSE
         PLUGIN_MANUFACTURER_CODE Mic1
         PLUGIN_CODE Dyjv
         FORMATS VST3 AU Standalone

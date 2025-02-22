@@ -124,7 +124,8 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 {
     juce::ScopedNoDenormals noDenormals;
 
-    buffer.clear();
+    for (auto i = 0; i < buffer.getNumChannels(); ++i)
+        buffer.clear(i, 0, buffer.getNumSamples());
 
     synth.processBlock(buffer, midiMessages);
 }
