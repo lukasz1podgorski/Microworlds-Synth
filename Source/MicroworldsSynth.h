@@ -1,7 +1,7 @@
 #pragma once
-#include "JuceHeader.h"
-//#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_audio_processors/juce_audio_processors.h>
 #include "WavetableOscillator.h"
+#include "Envelope.h"
 
 class MicroworldsSynth
 {
@@ -18,4 +18,5 @@ private:
 	
 	double sampleRate;
 	std::vector<WavetableOscillator> oscillators;
+	Envelope envelope;
 };

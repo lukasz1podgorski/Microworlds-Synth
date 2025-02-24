@@ -37,6 +37,8 @@ set(SourceFiles
         Source/MicroworldsSynth.h
         Source/WavetableOscillator.cpp
         Source/WavetableOscillator.h
+        Source/Envelope.cpp
+        Source/Envelope.h
 )
 
 # Change these to your own preferences

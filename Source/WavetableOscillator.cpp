@@ -1,5 +1,5 @@
 #include "WavetableOscillator.h"
-#include "JuceHeader.h"
+#include <juce_audio_processors/juce_audio_processors.h>
 #include <cmath>
 
 WavetableOscillator::WavetableOscillator(std::vector<float> waveTable,
