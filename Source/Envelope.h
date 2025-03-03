@@ -3,15 +3,17 @@ class Envelope
 {
 public:
     float adsr(float input, int trigger);
-    void setAttack(float attackTime);
-    void setDecay(float decayTime);
+    void setAttack(float attackTime, double sampleRate);
+    void setDecay(float decayTime, double sampleRate);
     void setSustain(float sustainLevel);
-    void setRelease(float releaseTime);
+    void setRelease(float releaseTime, double sampleRate);
+    bool ADSRnoteOn();
+    bool ADSRnoteOff();
+    bool ADSRisActive();
     int trigger = 0;
 
 private:
-    double sampleRate;
-    float input, output, amplitude,
+    float input, output, amplitude = 0.f,
         attack, decay, sustain, release;
     long holdTime = 1;
     long holdCount;

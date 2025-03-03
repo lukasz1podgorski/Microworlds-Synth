@@ -39,15 +39,21 @@ void MicroworldsSynth::processBlock(juce::AudioBuffer<float>& buffer,
 									juce::MidiBuffer& midiMessages)
 {
 	auto currentSample = 0;
+	envelope.setAttack(2000.f, sampleRate);
+	envelope.setDecay(50.f, sampleRate);
+	envelope.setSustain(0.3f);
+	envelope.setRelease(2000.f, sampleRate);
 
 	for (const auto midiMetadata : midiMessages)
 	{
 		const auto message = midiMetadata.getMessage();
 		const auto messagePosition = static_cast<int>(message.getTimeStamp());
-
+		
 		render(buffer, currentSample, messagePosition);
 		currentSample = messagePosition;
 		handleMidiEvent(message);
+		std::cout << "noteon: " << message.isNoteOn() << std::endl;
+		std::cout << "TRIGGER: " << envelope.trigger << std::endl;
 	}
 
 	render(buffer, currentSample, buffer.getNumSamples());
@@ -64,12 +70,24 @@ void MicroworldsSynth::render(juce::AudioBuffer<float>& buffer, int startSample,
 		{
 			for (auto sample = startSample; sample < endSample; ++sample)
 			{
-				firstChannel[sample] += oscillator.getSample();
+				//firstChannel[sample] = envelope.adsr(firstChannel[sample], envelope.trigger);
+				//firstChannel[sample] += envelope.adsr(oscillator.getSample(), envelope.trigger);
+				//firstChannel[sample] += oscillator.getSample();
+				//firstChannel[sample] += envelope.adsr(oscillator.getSample(), envelope.trigger);
+				//firstChannel[sample] = envelope.adsr(firstChannel[sample] + oscillator.getSample(), envelope.trigger);
+				firstChannel[sample] = envelope.adsr(firstChannel[sample] + oscillator.getSample(), envelope.trigger);
+				std::cout << "channeldata: " << firstChannel[sample] << std::endl;
+				std::cout << "OscData: " << oscillator.getSample() << std::endl;
+
+				//if (firstChannel[sample] == 0)
+				//{
+				//	envelope.trigger = 0;
+				//}
 			}
 		}
 	}
 
-	for (auto channel = 1; channel < buffer.getNumChannels(); ++channel)
+	for (int channel = 1; channel < buffer.getNumChannels(); ++channel)
 	{
 		auto* channelData = buffer.getWritePointer(channel);
 		std::copy(firstChannel + startSample, firstChannel + endSample,
@@ -81,21 +99,45 @@ void MicroworldsSynth::handleMidiEvent(const juce::MidiMessage& midiMessage)
 {
 	if (midiMessage.isNoteOn())
 	{
+		envelope.trigger = 1;
+		std::cout << "envelope active key on: " << envelope.ADSRisActive() << std::endl;
+		std::cout << "key pressed: " << envelope.trigger << std::endl;
 		const auto oscillatorID = midiMessage.getNoteNumber();
 		const auto frequency = midiNoteNumberToFrequency(oscillatorID);
 		oscillators[oscillatorID].setFrequency(frequency);
-
+	
 	}
 	else if (midiMessage.isNoteOff())
 	{
+		envelope.trigger = 0;
+		std::cout << "key off: " << envelope.trigger << std::endl;
+
+		std::cout << "envelope not active key off: " << envelope.ADSRisActive() << std::endl;
 		const auto oscillatorID = midiMessage.getNoteNumber();
 		oscillators[oscillatorID].stop();
+
+		//if (envelope.ADSRisActive() == false)
+		//{
+		//	std::cout << "envelope not active key off: " << envelope.ADSRisActive() << std::endl;
+		//	const auto oscillatorID = midiMessage.getNoteNumber();
+		//	oscillators[oscillatorID].stop();
+		//}
+		//else
+		//{
+
+		//}
+
 	}
 	else if (midiMessage.isAllNotesOff())
 	{
+		envelope.trigger = 0;
+
 		for (auto& oscillator : oscillators)
 		{
-			oscillator.stop();
+			if (envelope.ADSRisActive() == false)
+			{
+				oscillator.stop();
+			}
 		}
 	}
 }
