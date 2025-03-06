@@ -15,6 +15,7 @@ private:
 	void handleMidiEvent(const juce::MidiMessage& midiEvent);
 	static float midiNoteNumberToFrequency(int midiNoteNumber);
 	void render(juce::AudioBuffer<float>& buffer, int startSample, int endSample);
+	int stoppedNote = 0;
 	
 	double sampleRate;
 	std::vector<WavetableOscillator> oscillators;

@@ -13,7 +13,7 @@ public:
 	void setFrequency(float frequency);
 	float getSample();
 	void stop();
-	bool isPlaying() const;
+	bool isPlaying();
 
 private:
 	float linearInterpolation();

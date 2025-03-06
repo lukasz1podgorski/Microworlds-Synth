@@ -16,10 +16,9 @@ void WavetableOscillator::setFrequency(float frequency)
 
 float WavetableOscillator::getSample()
 {
-	jassert(isPlaying());
-	index = std::fmod(index, static_cast<float>(waveTable.size()));
 	const auto sample = linearInterpolation();
 	index += indexIncrement;
+	index = std::fmod(index, static_cast<float>(waveTable.size()));
 
 	return sample;
 }
@@ -41,7 +40,7 @@ void WavetableOscillator::stop()
 	indexIncrement = 0.f;
 }
 
-bool WavetableOscillator::isPlaying() const
+bool WavetableOscillator::isPlaying()
 {
 	return indexIncrement != 0.f;
 }
