@@ -13,6 +13,7 @@ public:
     int trigger = 0;
     float amplitude = 0.f;
     bool ADSRoff = false;
+    bool retrigger = false;
 
 private:
     float input, output, 

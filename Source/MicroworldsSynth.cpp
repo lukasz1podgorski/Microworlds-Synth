@@ -42,7 +42,7 @@ void MicroworldsSynth::processBlock(juce::AudioBuffer<float>& buffer,
 	envelope.setAttack(200.f, sampleRate);
 	envelope.setDecay(50.f, sampleRate);
 	envelope.setSustain(0.5f);
-	envelope.setRelease(200.f, sampleRate);
+	envelope.setRelease(100.f, sampleRate);
 
 	for (const auto midiMetadata : midiMessages)
 	{
@@ -81,9 +81,9 @@ void MicroworldsSynth::render(juce::AudioBuffer<float>& buffer, int startSample,
 				//{
 				//	envelope.trigger = 0;
 				//}
-				if (envelope.trigger == 0 && envelope.ADSRoff == true)
+				if (envelope.ADSRoff == true)
 				{
-					std::cout << "wy³¹czony aDSR" << std::endl;
+					std::cout << "wy³¹czony aDSR: " << &oscillator << std::endl;
 					oscillator.stop();
 				}
 

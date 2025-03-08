@@ -3,18 +3,19 @@
 
 float Envelope::adsr(float input, int trigger)
 {
-	if (trigger == 1 && attackPhase != 1 && decayPhase != 1 && sustainPhase != 1)
+	if (trigger == 1 && attackPhase != 1 && decayPhase != 1 && sustainPhase != 1 && releasePhase != 1)
 	{
+		ADSRoff = false;
 		attackPhase = 1;
 		std::cout << "attack phase triggered: " << attackPhase << std::endl;
 		decayPhase = 0;
 		sustainPhase = 0;
 		releasePhase = 0;
-		ADSRoff = false;
 	}
-	
-	if (attackPhase == 1)
+
+	if (attackPhase == 1 || retrigger == true)
 	{
+		ADSRoff = false;
 		releasePhase = 0;
 		amplitude += (1 * attack);
 		output = input * amplitude;
@@ -23,10 +24,10 @@ float Envelope::adsr(float input, int trigger)
 		{
 			amplitude = 1.0f;
 			attackPhase = 0;
+			retrigger = false;
 			decayPhase = 1;
 			std::cout << "decay phase triggered: " << decayPhase << std::endl;
 		}
-
 	}
 
 	if (decayPhase == 1)
@@ -54,38 +55,67 @@ float Envelope::adsr(float input, int trigger)
 		std::cout << "release phase triggered: " << releasePhase << std::endl;
 	}
 
-	if (releasePhase == 1 && amplitude > 0.f)
+	if ((releasePhase == 1 && amplitude > 0.f) && trigger != 1)
 	{
-
 		if (amplitude > 0.0001)
 		{
 			output = input * (amplitude *= release);
 		}
-		else
+		else // fade out at releaseTime
 		{
-			amplitude -= releaseStep;
+			output = input * (amplitude -= releaseStep);
 			if (amplitude < 0.0) amplitude = 0.0;
-			//amplitude = 0.f;
-		}
-
-		if (amplitude == 0.f)
-		{
-			releasePhase = 0;
+			
 			output = 0.f;
 			ADSRoff = true;
+			releasePhase = 0;
 			std::cout << "ADSR off MUSI byæ 1: " << ADSRoff << std::endl;
 			std::cout << "release phase code FINISHED: " << true << std::endl;
 		}
-		//else if (amplitude != 0.f && trigger == 1)
+	}
+
+	if ((releasePhase == 1 && amplitude > 0.f) && trigger == 1)
+	{
+		output = input * (amplitude -= releaseStep);
+		
+		if (amplitude < 0.0) amplitude = 0.0;
+		
+		output = 0.f;
+		ADSRoff = true;
+		retrigger = true;
+		releasePhase = 0;
+
+		//if (amplitude > 0.0001)
 		//{
+		//	output = input * (amplitude *= release);
+		//}
+		//else
+		//{
+		//	amplitude -= releaseStep;
+		//	if (amplitude < 0.0) amplitude = 0.0;
+
 		//	releasePhase = 0;
+		//	output = 0.f;
 		//	ADSRoff = true;
+		//	retrigger = true;
 		//	attackPhase = 1;
 		//}
 
-		//if (trigger == 1)
+		//if (amplitude > 0.0001)
 		//{
+		//	output = input * (amplitude *= release);
+		//}
+		//else // fade out at releaseTime
+		//{
+		//	amplitude -= releaseStep;
+		//	if (amplitude < 0.0) amplitude = 0.0;
+		//	releasePhase = 0;
+		//	output = 0.f;
+		//	ADSRoff = true;
+		//	retrigger = true;
 		//	attackPhase = 1;
+		//	std::cout << "ADSR off retrigger MUSI byæ 1: " << ADSRoff << std::endl;
+		//	std::cout << "release phase retrigger code FINISHED: " << true << std::endl;
 		//}
 	}
 	
